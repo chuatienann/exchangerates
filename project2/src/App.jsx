@@ -1,12 +1,23 @@
-import ConverterForm from "./components/converterform"
+import React from "react";
+import Converter from "./Components/Converter";
 
-const App = () => {
+function App() {
   return (
-    <div className="currency-converter">
-      <h2 className="converter-title">Currency Converter</h2>
-      <ConverterForm />
-    </div>
-  )
+    <>
+    <h1>Website name</h1>
+      <div className="container">
+        <div className="row">
+          <div className="col-sm-9">
+            <div className="row border">
+              <Converter></Converter>
+            </div>
+            <div className="row border">GRAPH</div>
+          </div>
+          <div className="col-sm-3 border">WATCHLIST</div>
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default App;
