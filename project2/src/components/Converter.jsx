@@ -1,90 +1,87 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import CurrencyCard from "./CurrencyCard";
 import useGet from "../Hooks/useGet";
 
-const todayDate = new Date().toISOString().split("T")[0];
+const Converter = (props) => {
+  const dateRef = useRef();
 
-const Converter = () => {
   // state for API endpoints
-  const [currSymbol, setcurrSymbol] = useState({});
-  const [cryptoSymbol, setCryptoSymbol] = useState({});
-  const [convert, setConvert] = useState({});
+  const [convert, setConvert] = useState({ result: 1 });
 
   // state
-  const [selection, setSelection] = useState({
-    from: "AED",
-    to: "AED",
-    amount: 1,
-  });
   const [reverse, setReverse] = useState(false);
 
   // function to call API
   const getData = useGet();
 
-  const getCurrSymbol = async () => {
-    const data = await getData("symbols");
-    setcurrSymbol(data.symbols);
-  };
-
-  const getCryptoSymbol = async () => {
-    const data = await getData("cryptocurrencies");
-    setCryptoSymbol(data.cryptocurrencies);
-  };
-
   const getConvert = async () => {
     const data = await getData(
-      `convert?from=${selection.from}&to=${selection.to}&amount=${selection.amount}`
+      `convert?from=${props.selection.from}&to=${props.selection.to}&amount=${props.selection.amount}&date=${props.selection.date}`
     );
     setConvert(data);
   };
 
   // function
-  const reverseSym = () => {
+  const handleReverse = () => {
     let a, b;
-    [a, b] = [selection.from, selection.to];
-    setSelection((currState) => {
+    [a, b] = [props.selection.from, props.selection.to];
+    props.setSelection((currState) => {
       return { ...currState, from: b, to: a };
     });
     setReverse(true);
   };
 
+  const handleDate = () => {
+    props.setSelection((currState) => {
+      return { ...currState, date: dateRef.current.value };
+    });
+  };
+
   //use effect
   useEffect(() => {
-    getCurrSymbol();
-    getCryptoSymbol();
+    props.getCurrSymbol();
+    props.getCryptoSymbol();
     console.log("useEff run");
   }, []);
 
   useEffect(() => {
     getConvert();
-  }, [selection]);
+  }, [props.selection]);
 
   return (
     <>
-      {JSON.stringify(convert)}
-      {JSON.stringify(selection)}
-      <div className="row">Converter</div>
+      {/* {JSON.stringify(convert)}
+      <br></br>
+      <br></br>
+      {JSON.stringify(props.selection)}
+      <br></br>
+      {JSON.stringify(props.currSymbol)}
+      <br></br> */}
+
+      <div className="row">
+        <p>Converter</p>
+      </div>
       <div className="row">
         <div className="col-sm-5">
           <CurrencyCard
-            currSymbol={currSymbol}
-            cryptoSymbol={cryptoSymbol}
-            setSelection={setSelection}
-            selection={selection}
+            currSymbol={props.currSymbol}
+            cryptoSymbol={props.cryptoSymbol}
+            setSelection={props.setSelection}
+            selection={props.selection}
             setReverse={setReverse}
             reverse={reverse}
             convert={convert}
           ></CurrencyCard>
         </div>
         <div className="col-sm-2">
-          <button onClick={reverseSym}>rev btn</button>
+          <button onClick={handleReverse}>rev btn</button>
         </div>
         <div className="col-sm-5">
           <CurrencyCard
-            currSymbol={currSymbol}
-            cryptoSymbol={cryptoSymbol}
-            setSelection={setSelection}
-            selection={selection}
+            currSymbol={props.currSymbol}
+            cryptoSymbol={props.cryptoSymbol}
+            setSelection={props.setSelection}
+            selection={props.selection}
             setReverse={setReverse}
             reverse={reverse}
             convert={convert}
@@ -98,7 +95,10 @@ const Converter = () => {
         <input
           className="col-sm-4"
           type="date"
-          defaultValue={todayDate}
+          defaultValue={props.todayDate}
+          max={props.todayDate}
+          ref={dateRef}
+          onChange={handleDate}
         ></input>
       </div>
       <div className="row"></div>

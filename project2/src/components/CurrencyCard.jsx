@@ -1,19 +1,26 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const CurrencyCard = (props) => {
-  const selectRef = useRef();
   const inputRef = useRef();
 
-  const handleSelection = (event) => {
+  // state
+  const init = props.to ? props.selection.to : props.selection.from;
+  const [currSelect, setCurrSelect] = useState(init);
+
+  const handleSelect = (event) => {
+    setCurrSelect(event.target.value);
+  };
+
+  const handleSelection = () => {
     if (props.to) {
       props.setSelection((currState) => {
-        return { ...currState, to: selectRef.current.value };
+        return { ...currState, to: currSelect };
       });
     } else {
       props.setSelection((currState) => {
         return {
           ...currState,
-          from: selectRef.current.value,
+          from: currSelect,
           amount: inputRef.current.value,
         };
       });
@@ -21,20 +28,12 @@ const CurrencyCard = (props) => {
   };
 
   const handleReverse = () => {
-    selectRef.current.value = props.to
-      ? props.selection.to
-      : props.selection.from;
+    setCurrSelect(props.to ? props.selection.to : props.selection.from);
   };
 
   const handleDisplayConvert = () => {
     if (props.to) inputRef.current.value = props.convert.result;
   };
-
-  // why not working?
-  // useEffect(() => {
-  //   selectRef.current.defaultValue = props.to ? "MYR" : "SGD";
-  //   console.log("set default");
-  // }, []);
 
   // to reverse symbol after button clicked
   useEffect(() => {
@@ -49,12 +48,21 @@ const CurrencyCard = (props) => {
     handleDisplayConvert();
   }, [props.convert.result]);
 
+  useEffect(() => {
+    handleSelection();
+  }, [currSelect]);
+
   return (
     <>
       <div className="row">
-        <select onChange={handleSelection} ref={selectRef}>
-          {Object.keys(props.currSymbol).map((item, idx) => {
-            return <option key={idx} value={item}>{`${item}`}</option>;
+        <select value={currSelect} onChange={handleSelect}>
+          {Object.values(props.currSymbol).map((item, idx) => {
+            return (
+              <option
+                key={idx}
+                value={item.code}
+              >{`${item.code} - ${item.description}`}</option>
+            );
           })}
         </select>
       </div>
