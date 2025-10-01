@@ -2,15 +2,23 @@ import React, { useState, useEffect } from "react";
 import CurrencyCard from "./CurrencyCard";
 import useGet from "../Hooks/useGet";
 
+const todayDate = new Date().toISOString().split("T")[0];
+
 const Converter = () => {
   // state for API endpoints
   const [currSymbol, setcurrSymbol] = useState({});
   const [cryptoSymbol, setCryptoSymbol] = useState({});
   const [convert, setConvert] = useState({});
 
-  const [selection, setSelection] = useState({ from: "AED", to: "AED" });
+  // state
+  const [selection, setSelection] = useState({
+    from: "AED",
+    to: "AED",
+    amount: 1,
+  });
   const [reverse, setReverse] = useState(false);
 
+  // function to call API
   const getData = useGet();
 
   const getCurrSymbol = async () => {
@@ -25,11 +33,12 @@ const Converter = () => {
 
   const getConvert = async () => {
     const data = await getData(
-      `convert?from=${selection.from}&to=${selection.to}`
+      `convert?from=${selection.from}&to=${selection.to}&amount=${selection.amount}`
     );
     setConvert(data);
   };
 
+  // function
   const reverseSym = () => {
     let a, b;
     [a, b] = [selection.from, selection.to];
@@ -53,10 +62,8 @@ const Converter = () => {
   return (
     <>
       {JSON.stringify(convert)}
-      <br></br>
       {JSON.stringify(selection)}
       <div className="row">Converter</div>
-      <div className="row">Date selection</div>
       <div className="row">
         <div className="col-sm-5">
           <CurrencyCard
@@ -66,6 +73,7 @@ const Converter = () => {
             selection={selection}
             setReverse={setReverse}
             reverse={reverse}
+            convert={convert}
           ></CurrencyCard>
         </div>
         <div className="col-sm-2">
@@ -79,10 +87,19 @@ const Converter = () => {
             selection={selection}
             setReverse={setReverse}
             reverse={reverse}
+            convert={convert}
             to={true}
             disabled={true}
           ></CurrencyCard>
         </div>
+      </div>
+      <div className="row">
+        <label className="col-sm-1">Date:</label>
+        <input
+          className="col-sm-4"
+          type="date"
+          defaultValue={todayDate}
+        ></input>
       </div>
       <div className="row"></div>
     </>
