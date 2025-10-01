@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import CurrencyCard from "./CurrencyCard";
-import useGet from "../hooks/useGet";
+import useGet from "../Hooks/useGet";
 
 const Converter = () => {
+  // state for API endpoints
   const [currSymbol, setcurrSymbol] = useState({});
   const [cryptoSymbol, setCryptoSymbol] = useState({});
-  const [selection, setSelection] = useState({ from: "", to: "" });
+  const [convert, setConvert] = useState({});
+
+  const [selection, setSelection] = useState({ from: "AED", to: "AED" });
+  const [reverse, setReverse] = useState(false);
 
   const getData = useGet();
 
@@ -19,18 +23,37 @@ const Converter = () => {
     setCryptoSymbol(data.cryptocurrencies);
   };
 
-  const reverseSym = () => {
-    console.log("clicked");
+  const getConvert = async () => {
+    const data = await getData(
+      `convert?from=${selection.from}&to=${selection.to}`
+    );
+    setConvert(data);
   };
 
+  const reverseSym = () => {
+    let a, b;
+    [a, b] = [selection.from, selection.to];
+    setSelection((currState) => {
+      return { ...currState, from: b, to: a };
+    });
+    setReverse(true);
+  };
+
+  //use effect
   useEffect(() => {
     getCurrSymbol();
     getCryptoSymbol();
     console.log("useEff run");
   }, []);
 
+  useEffect(() => {
+    getConvert();
+  }, [selection]);
+
   return (
     <>
+      {JSON.stringify(convert)}
+      <br></br>
       {JSON.stringify(selection)}
       <div className="row">Converter</div>
       <div className="row">Date selection</div>
@@ -40,6 +63,9 @@ const Converter = () => {
             currSymbol={currSymbol}
             cryptoSymbol={cryptoSymbol}
             setSelection={setSelection}
+            selection={selection}
+            setReverse={setReverse}
+            reverse={reverse}
           ></CurrencyCard>
         </div>
         <div className="col-sm-2">
@@ -50,7 +76,11 @@ const Converter = () => {
             currSymbol={currSymbol}
             cryptoSymbol={cryptoSymbol}
             setSelection={setSelection}
+            selection={selection}
+            setReverse={setReverse}
+            reverse={reverse}
             to={true}
+            disabled={true}
           ></CurrencyCard>
         </div>
       </div>
