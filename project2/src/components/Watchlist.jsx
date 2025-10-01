@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import useGet from "../Hooks/useGet";
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
+import { Snackbar } from "@mui/material";
+import { Alert } from "@mui/material";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +20,10 @@ const Watchlist = (props) => {
   const [favCurr, setFavCurr] = useState(["USD", "EUR", "JPY", "MYR"]);
   const [isEdit, setIsEdit] = useState(false);
 
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openDel, setOpenDel] = useState(false);
+  const [openRepeat, setOpenRepeat] = useState(false);
+
   // function
   const handleFavCurr = (event, isRemove = false) => {
     if (isRemove) {
@@ -25,39 +31,60 @@ const Watchlist = (props) => {
       setFavCurr((currState) => {
         return [...currState].toSpliced(event.target.id, 1);
       });
+      setOpenDel(true);
     } else {
       if (favCurr.includes(selectRef.current.value)) {
-        alert(`${selectRef.current.value} is already added!`);
+        setOpenRepeat(true);
       } else {
         setFavCurr((currState) => {
           return [...currState, selectRef.current.value];
         });
+        setOpenAdd(true);
       }
     }
   };
 
   const handleBaseCurr = (event) => {
+    // update baseCurr to clicked symbol
+    setBaseCurr(favCurr[event.target.id]);
+
     // remove the clicked symbol
     setFavCurr((currState) => {
-      return [...currState].toSpliced(
-        favCurr.indexOf(event.target.textContent),
-        1
-      );
+      return [...currState].toSpliced(event.target.id, 1);
     });
 
     // add current baseCurr to favCurr
     setFavCurr((currState) => {
       return [...currState, baseCurr];
     });
-
-    // update baseCurr to clicked symbol
-    setBaseCurr(event.target.textContent);
   };
 
   const handleEdit = () => {
     setIsEdit((currState) => {
       return !currState;
     });
+  };
+
+  // snackbar
+  const handleCloseAdd = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenAdd(false);
+  };
+
+  const handleCloseDel = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenDel(false);
+  };
+
+  const handleCloseRepeat = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenRepeat(false);
   };
 
   // function to call API
@@ -112,7 +139,6 @@ const Watchlist = (props) => {
     });
 
     setTimeSeries((currState) => {
-      //   return [...currState, {[sym]: data} ];
       return { ...currState, [sym]: data };
     });
   };
@@ -130,6 +156,7 @@ const Watchlist = (props) => {
           label: "abc",
           data: timeSeries[item]?.map((item) => item.rate),
           borderColor: watchlist[item]?.fluctuation < 0 ? "red" : "green",
+          borderWidth: 1.5,
         },
       ],
     };
@@ -186,9 +213,9 @@ const Watchlist = (props) => {
     <>
       {/* {JSON.stringify(watchlist)} */}
       {/* {JSON.stringify(dataObj)} */}
-      <div className="row padding-3">
+      <div className="row padding-tb">
         <div className="col-sm-9">
-          <h4>Watchlist</h4>
+          <h4>Exchange Rate Watchlist</h4>
         </div>
         <div className="col-sm-3">
           <button
@@ -199,11 +226,6 @@ const Watchlist = (props) => {
           </button>
         </div>
       </div>
-      <div className="row">
-        <div className="col-sm-3">Currency</div>
-        <div className="col-sm-3">Rate</div>
-        <div className="col-sm-6">{"Change%(1Y)"}</div>
-      </div>
       <div className="row base-currency">
         <div className="col-sm-3">{baseCurr}</div>
         <div className="col-sm-3"></div>
@@ -212,51 +234,61 @@ const Watchlist = (props) => {
       </div>
 
       <ul className="list-group list-group-flush">
-        {favCurr.map((item, idx) => {
-          return (
-            <li
-              className={
-                idx % 2
-                  ? "list-group-item list-group-item-action list-group-item-secondary"
-                  : "list-group-item list-group-item-action list-group-item-light"
-              }
-              key={idx}
-            >
-              <div className="row fav-currency">
-                <div
-                  className={isEdit ? "col-sm-2" : "col-sm-2"}
-                  onClick={handleBaseCurr}
-                >
-                  {item}
-                </div>
-                <div className={isEdit ? "col-sm-2" : "col-sm-3"}>
-                  {watchlist[item]?.rate}
-                </div>
-                <div
-                  className={isEdit ? "col-sm-2" : "col-sm-2"}
-                  style={{
-                    color: watchlist[item]?.fluctuation < 0 ? "red" : "green",
-                  }}
-                >
-                  {watchlist[item]?.fluctuation}
-                </div>
-                <div className="col-sm-4">
-                  <Line data={dataObj[item]} options={options}></Line>
-                </div>
-
-                {isEdit && (
-                  <button
-                    className="col-sm-1 del-btn btn btn-danger"
-                    onClick={(event) => handleFavCurr(event, true)}
+        <li className="list-group-item">
+          <div className="row header">
+            <div className="col-sm-2">Sym.</div>
+            <div className="col-sm-3">Rate</div>
+            <div className="col-sm-7">Change% (1Y)</div>
+          </div>
+        </li>
+        <div className="scroll">
+          {favCurr.map((item, idx) => {
+            return (
+              <li
+                className={
+                  idx % 2
+                    ? "list-group-item list-group-item-action list-group-item-secondary"
+                    : "list-group-item list-group-item-action list-group-item-light"
+                }
+                key={idx}
+              >
+                <div className="row fav-currency">
+                  <div
+                    className={isEdit ? "col-sm-2" : "col-sm-2"}
                     id={idx}
+                    onClick={handleBaseCurr}
                   >
-                    -
-                  </button>
-                )}
-              </div>
-            </li>
-          );
-        })}
+                    {`${props.emojiFlags[item]} ${item}`}
+                  </div>
+                  <div className={isEdit ? "col-sm-2" : "col-sm-3"}>
+                    {watchlist[item]?.rate}
+                  </div>
+                  <div
+                    className={isEdit ? "col-sm-2" : "col-sm-2"}
+                    style={{
+                      color: watchlist[item]?.fluctuation < 0 ? "red" : "green",
+                    }}
+                  >
+                    {watchlist[item]?.fluctuation}
+                  </div>
+                  <div className="col-sm-4">
+                    <Line data={dataObj[item]} options={options}></Line>
+                  </div>
+
+                  {isEdit && (
+                    <button
+                      className="col-sm-1 del-btn btn btn-danger"
+                      onClick={(event) => handleFavCurr(event, true)}
+                      id={idx}
+                    >
+                      -
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </div>
         <li className="list-group-item">
           <div className="row fav-currency">
             <select className="col-sm-3" ref={selectRef}>
@@ -275,6 +307,45 @@ const Watchlist = (props) => {
             >
               +
             </button>
+            <Snackbar
+              open={openAdd}
+              autoHideDuration={3000}
+              onClose={handleCloseAdd}
+            >
+              <Alert
+                onClose={handleCloseAdd}
+                severity="success"
+                sx={{ width: "300px" }}
+              >
+                Symbol successfully added!
+              </Alert>
+            </Snackbar>
+            <Snackbar
+              open={openDel}
+              autoHideDuration={3000}
+              onClose={handleCloseDel}
+            >
+              <Alert
+                onClose={handleCloseDel}
+                severity="success"
+                sx={{ width: "300px" }}
+              >
+                Symbol successfully removed!
+              </Alert>
+            </Snackbar>
+            <Snackbar
+              open={openRepeat}
+              autoHideDuration={3000}
+              onClose={handleCloseRepeat}
+            >
+              <Alert
+                onClose={handleCloseRepeat}
+                severity="warning"
+                sx={{ width: "300px" }}
+              >
+                Item already exist!
+              </Alert>
+            </Snackbar>
           </div>
         </li>
       </ul>

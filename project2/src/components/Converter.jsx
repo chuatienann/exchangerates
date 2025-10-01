@@ -7,21 +7,8 @@ import { faArrowRightArrowLeft } from "@fortawesome/free-solid-svg-icons";
 const Converter = (props) => {
   const dateRef = useRef();
 
-  // state for API endpoints
-  const [convert, setConvert] = useState({ result: 1 });
-
   // state
   const [reverse, setReverse] = useState(false);
-
-  // function to call API
-  const getData = useGet();
-
-  const getConvert = async () => {
-    const data = await getData(
-      `convert?from=${props.selection.from}&to=${props.selection.to}&amount=${props.selection.amount}&date=${props.selection.date}`
-    );
-    setConvert(data);
-  };
 
   // function
   const handleReverse = () => {
@@ -42,12 +29,11 @@ const Converter = (props) => {
   //use effect
   useEffect(() => {
     props.getCurrSymbol();
-    props.getCryptoSymbol();
     console.log("useEff run");
   }, []);
 
   useEffect(() => {
-    getConvert();
+    props.getConvert();
   }, [props.selection]);
 
   return (
@@ -67,12 +53,12 @@ const Converter = (props) => {
         <div className="col-sm-5">
           <CurrencyCard
             currSymbol={props.currSymbol}
-            cryptoSymbol={props.cryptoSymbol}
             setSelection={props.setSelection}
             selection={props.selection}
             setReverse={setReverse}
             reverse={reverse}
-            convert={convert}
+            convert={props.convert}
+            emojiFlags={props.emojiFlags}
           ></CurrencyCard>
         </div>
         <div className="col-sm-2 centered">
@@ -86,27 +72,33 @@ const Converter = (props) => {
         <div className="col-sm-5">
           <CurrencyCard
             currSymbol={props.currSymbol}
-            cryptoSymbol={props.cryptoSymbol}
             setSelection={props.setSelection}
             selection={props.selection}
             setReverse={setReverse}
             reverse={reverse}
-            convert={convert}
+            convert={props.convert}
+            emojiFlags={props.emojiFlags}
             to={true}
             disabled={true}
           ></CurrencyCard>
         </div>
       </div>
       <div className="row">
-        <label className="col-sm-1">Date:</label>
+        <label className="col-sm-1" style={{ alignSelf: 'center' }}>
+          Date:
+        </label>
         <input
-          className="col-sm-4 boxes"
+          className="col-sm-4 boxes boxes-h"
           type="date"
           defaultValue={props.todayDate}
           max={props.todayDate}
           ref={dateRef}
           onChange={handleDate}
         ></input>
+        <div className="col-sm-2"></div>
+        <p className="col-sm-5 last-update">
+         {`Last updated ${props.todayDate}`}
+        </p>
       </div>
     </>
   );

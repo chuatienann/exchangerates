@@ -1,6 +1,6 @@
 import React from "react";
-
-import styles from "./Navigation.css";
+import { NavLink } from "react-router-dom";
+import styles from "./NavBar.module.css";
 
 const NavBar = () => {
   return (
@@ -9,10 +9,10 @@ const NavBar = () => {
         <nav>
           <ul>
             <img
-              src="/currency-converter.svg"
+              src="/currency-converter.png"
               className={`${styles.logo} col-sm-1`}
             />
-            <p className={`${styles.brand} col-sm-2`}>CurrenSee</p>
+            <p className={`${styles.brand} col-sm-2`}>Currency Converter</p>
             <li className="col-sm-2">
               <NavLink
                 className={(navData) => (navData.isActive ? styles.active : "")}
@@ -37,14 +37,6 @@ const NavBar = () => {
                 Chart
               </NavLink>
             </li>
-            <li className="col-sm-2">
-              <NavLink
-                className={(navData) => (navData.isActive ? styles.active : "")}
-                to="/about-me"
-              >
-                About Me
-              </NavLink>
-            </li>
           </ul>
         </nav>
       </header>
@@ -52,4 +44,4 @@ const NavBar = () => {
   );
 };
 
-export default Navigation;
+export default NavBar;

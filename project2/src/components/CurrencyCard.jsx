@@ -55,13 +55,16 @@ const CurrencyCard = (props) => {
   return (
     <>
       <div className="row">
-        <select value={currSelect} onChange={handleSelect} className="boxes">
+        <select
+          value={currSelect}
+          onChange={handleSelect}
+          className="boxes boxes-h select"
+        >
           {Object.values(props.currSymbol).map((item, idx) => {
             return (
-              <option
-                key={idx}
-                value={item.code}
-              >{`${item.code} - ${item.description}`}</option>
+              <option key={idx} value={item.code}>
+                {`${item.code} - ${item.description} ${props.emojiFlags[item.code]}`}
+              </option>
             );
           })}
         </select>
@@ -73,7 +76,7 @@ const CurrencyCard = (props) => {
           defaultValue={1}
           ref={inputRef}
           onChange={handleSelection}
-          className="boxes"
+          className={props.to ? "boxes" : "boxes boxes-h"}
         ></input>
       </div>
     </>

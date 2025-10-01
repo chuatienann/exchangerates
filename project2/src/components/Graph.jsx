@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import useGet from "../Hooks/useGet";
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import Watchlist from "./Watchlist";
+import { Snackbar } from "@mui/material";
+import { Alert } from "@mui/material";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
 
 const Graph = (props) => {
   // state for API endpoints (GET)
   const [timeSeries, setTimeSeries] = useState([]);
   const [fluctuation, setFluctuation] = useState({});
+
+  // state
+  const [openRepeat, setOpenRepeat] = useState(false);
 
   // function to call API
   const getData = useGet();
@@ -53,6 +61,46 @@ const Graph = (props) => {
     });
   };
 
+  const handleAddWidget = () => {
+    props.setWidgetInfo((currState) => {
+      if (
+        currState.some((item) => {
+          return (
+            (item.sym == `${props.selection.from}/${props.selection.to}`) &
+            (item.timeframe == props.selection.timeframe)
+          );
+        })
+      ) {
+        // alert(
+        //   `${props.selection.from}/${props.selection.to} is already added!`
+        // );
+        setOpenRepeat(true);
+        return [...currState];
+      } else {
+        // control to max 4 widget
+        const arr = [...currState];
+        arr.length === 4 && arr.shift();
+        // add selection to widgets
+        return [
+          ...arr,
+          {
+            sym: `${props.selection.from}/${props.selection.to}`,
+            fluctuation: fluctuation.chgPercentage,
+            data: data,
+            timeframe: props.selection.timeframe,
+          },
+        ];
+      }
+    });
+  };
+
+  const handleCloseRepeat = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenRepeat(false);
+  };
+
   // useEffect
   useEffect(() => {
     getGraphData(props.selection.timeframe);
@@ -64,6 +112,8 @@ const Graph = (props) => {
     datasets: [
       {
         data: timeSeries.map((item) => item.rate),
+        borderColor: "rgba(149, 181, 209, 1)",
+        borderWidth: 1,
       },
     ],
   };
@@ -75,6 +125,13 @@ const Graph = (props) => {
         display: false,
       },
     },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+    },
   };
 
   return (
@@ -82,15 +139,47 @@ const Graph = (props) => {
       {/* {JSON.stringify(timeSeries)} */}
       {/* <br></br> */}
       <div className="row">
-        <h4>
-          {props.selection.from} to {props.selection.to} Chart{" "}
-          <span
-            style={{ color: fluctuation.chgPercentage < 0 ? "red" : "green" }}
-          >
-            {fluctuation.chgPercentage}%
-          </span>{" "}
-          {fluctuation.timeframe}
-        </h4>
+        <div className="col-sm-10">
+          <h4>
+            {props.selection.from} to {props.selection.to} Chart{" "}
+            <span
+              style={{
+                color: fluctuation.chgPercentage < 0 ? "red" : "green",
+              }}
+            >
+              {fluctuation.chgPercentage}%
+            </span>{" "}
+            {fluctuation.timeframe}
+          </h4>
+        </div>
+        {/* button only in dashboard */}
+        {props.isDashboard && (
+          <>
+            <button
+              className="col-sm-1 timeframe-btn btn btn-outline-secondary"
+              onClick={handleAddWidget}
+            >
+              +
+            </button>
+            <a
+              className="col-sm-1 timeframe-btn btn btn-outline-secondary"
+              href="/graph"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <FontAwesomeIcon icon={faUpRightAndDownLeftFromCenter} />
+            </a>
+          </>
+        )}
+        {/* last updated text only in Chart tab */}
+        {!props.isDashboard && (
+          <p className="col-sm-2 last-update">
+            {`Last updated ${props.todayDate}`}
+          </p>
+        )}
       </div>
       <div className="row">
         <div className="col-sm-4"></div>
@@ -122,6 +211,19 @@ const Graph = (props) => {
       <div className="row">
         <Line data={data} options={options}></Line>
       </div>
+      <Snackbar
+        open={openRepeat}
+        autoHideDuration={3000}
+        onClose={handleCloseRepeat}
+      >
+        <Alert
+          onClose={handleCloseRepeat}
+          severity="warning"
+          sx={{ width: "300px" }}
+        >
+          Item already exist!
+        </Alert>
+      </Snackbar>
     </>
   );
 };
