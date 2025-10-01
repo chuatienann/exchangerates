@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import CurrencyCard from "./CurrencyCard";
 import useGet from "../Hooks/useGet";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRightArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Converter = (props) => {
   const dateRef = useRef();
@@ -59,7 +61,7 @@ const Converter = (props) => {
       <br></br> */}
 
       <div className="row">
-        <p>Converter</p>
+        <h4>Converter</h4>
       </div>
       <div className="row">
         <div className="col-sm-5">
@@ -73,8 +75,13 @@ const Converter = (props) => {
             convert={convert}
           ></CurrencyCard>
         </div>
-        <div className="col-sm-2">
-          <button onClick={handleReverse}>rev btn</button>
+        <div className="col-sm-2 centered">
+          <button
+            onClick={handleReverse}
+            className="reverse-btn btn btn-outline-primary"
+          >
+            <FontAwesomeIcon icon={faArrowRightArrowLeft} />
+          </button>
         </div>
         <div className="col-sm-5">
           <CurrencyCard
@@ -93,7 +100,7 @@ const Converter = (props) => {
       <div className="row">
         <label className="col-sm-1">Date:</label>
         <input
-          className="col-sm-4"
+          className="col-sm-4 boxes"
           type="date"
           defaultValue={props.todayDate}
           max={props.todayDate}
@@ -101,7 +108,6 @@ const Converter = (props) => {
           onChange={handleDate}
         ></input>
       </div>
-      <div className="row"></div>
     </>
   );
 };
