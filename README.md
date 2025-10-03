@@ -1,12 +1,34 @@
-# React + Vite
+# £xchange Rate$
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<img width="1024" height="1024" alt="ChatGPT Image Sep 30, 2025, 05_30_48 AM" src="https://github.com/user-attachments/assets/00378c80-f298-452b-ae93-f7cb3c9885b8" />
 
-Currently, two official plugins are available:
+<br/>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Introduction
 
-## Expanding the ESLint configuration
+**£xchange Rate$** is a React App which provides all time exchange rates. The app also allows users to obtain historical rates and the growth in terms of past 1 week, 1 month or 1 year.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+<img width="1486" height="837" alt="Screenshot 2025-10-04 at 1 23 03 AM" src="https://github.com/user-attachments/assets/9cf44f7d-456e-4712-8b95-149c4d5dd018" />
+
+<br/>
+
+## Technologies Used
+
+- JavaScript
+- CSS
+- React
+- Bookstrap
+- Frankfurter API
+
+<br/>
+
+## Future development
+
+1. Adopt flag API
+2. Allow other currency to be base currency for watchlist (currently the base is SGD)
+
+<br/>
+
+## Attributions
+Font: Font Awesome
+Chart: Chart.js tutorial https://upmostly.com/tutorials/how-to-use-chart-js-with-react
