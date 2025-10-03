@@ -17,7 +17,7 @@ const Watchlist = (props) => {
 
   // state
   const [baseCurr, setBaseCurr] = useState("SGD");
-  const [favCurr, setFavCurr] = useState(["USD", "EUR", "JPY", "MYR"]);
+  const [favCurr, setFavCurr] = useState(["USD", "EUR", "JPY", "CNY"]);
   const [isEdit, setIsEdit] = useState(false);
 
   const [openAdd, setOpenAdd] = useState(false);

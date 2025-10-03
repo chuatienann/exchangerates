@@ -19,7 +19,7 @@ const ConverterCard = (props) => {
     }
   }
 
-  const forMap = [1, 5, 10, 25, 50, 100, 1000, 5000, 10000];
+  const forMap = [1, 5, 10, 50, 100, 500, 1000, 5000, 10000];
 
   const formatAmount = (n) => {
     // limit to 4 decimal places like your original code

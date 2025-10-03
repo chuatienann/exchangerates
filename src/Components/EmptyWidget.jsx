@@ -4,7 +4,7 @@ const EmptyWidget = () => {
   return (
     <>
       <div className="row widget border-empty">
-        Add widget +
+        Add graph +
       </div>
     </>
   );

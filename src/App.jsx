@@ -7,7 +7,7 @@ import FullGraph from "./Pages/FullGraph";
 import FullConverter from "./Pages/FullConverter";
 
 const App = () => {
-  const defaultCurrency = { from: "SGD", to: "MYR" };
+  const defaultCurrency = { from: "SGD", to: "USD" };
   const emojiFlags = {
     AED: "🇦🇪",
     AFN: "🇦🇫",
