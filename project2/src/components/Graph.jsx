@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useGet from "../Hooks/useGet";
 import Chart from "chart.js/auto";
 import { Line } from "react-chartjs-2";
@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpRightAndDownLeftFromCenter } from "@fortawesome/free-solid-svg-icons";
 
 const Graph = (props) => {
+  const navigate = useNavigate();
+
   // state for API endpoints (GET)
   const [timeSeries, setTimeSeries] = useState([]);
   const [fluctuation, setFluctuation] = useState({});
@@ -31,9 +33,12 @@ const Graph = (props) => {
       startDate = props.historyDate(0, 0, -1);
     }
 
+    const data = await getData(`latest?to=USD`);
+    const todayDate = data.date;
+
     // get time-series data
     const dataTimeSeries = await getData(
-      `timeseries?start_date=${startDate}&end_date=${props.todayDate}&base=${props.selection.from}&symbols=${props.selection.to}`
+      `${startDate}..${todayDate}?&from=${props.selection.from}&to=${props.selection.to}`
     );
     setTimeSeries(
       Object.entries(dataTimeSeries.rates).map((item) => {
@@ -45,12 +50,13 @@ const Graph = (props) => {
     );
 
     // get fluctuation
-    const dataFluc = await getData(
-      `fluctuation?start_date=${startDate}&end_date=${props.todayDate}&base=${props.selection.from}&symbols=${props.selection.to}`
-    );
+    // startDate might be weekend, the API only have data on WEEKDAYS
+    const firstDate = Object.keys(dataTimeSeries.rates)[0];
+
+    const firstRate = Object.values(dataTimeSeries.rates[firstDate])[0];
+    const lastRate = Object.values(dataTimeSeries.rates[todayDate])[0];
     const chgPercentage =
-      Math.ceil(dataFluc.rates[props.selection.to]["change_pct"] * -10000) /
-      100;
+      Math.ceil(((lastRate - firstRate) / firstRate) * 10000) / 100;
     setFluctuation({ chgPercentage, timeframe });
   };
 
@@ -71,9 +77,6 @@ const Graph = (props) => {
           );
         })
       ) {
-        // alert(
-        //   `${props.selection.from}/${props.selection.to} is already added!`
-        // );
         setOpenRepeat(true);
         return [...currState];
       } else {
@@ -141,15 +144,15 @@ const Graph = (props) => {
       <div className="row">
         <div className="col-sm-10">
           <h4>
-            {props.selection.from} to {props.selection.to} Chart{" "}
+            {props.selection.from} to {props.selection.to} Chart
             <span
               style={{
                 color: fluctuation.chgPercentage < 0 ? "red" : "green",
               }}
             >
-              {fluctuation.chgPercentage}%
-            </span>{" "}
-            {fluctuation.timeframe}
+              {` ${fluctuation.chgPercentage} %`}
+            </span>
+            {` ${fluctuation.timeframe}`}
           </h4>
         </div>
         {/* button only in dashboard */}
@@ -163,7 +166,7 @@ const Graph = (props) => {
             </button>
             <a
               className="col-sm-1 timeframe-btn btn btn-outline-secondary"
-              href="/graph"
+              onClick={() => navigate("/graph")}
               style={{
                 display: "flex",
                 justifyContent: "center",

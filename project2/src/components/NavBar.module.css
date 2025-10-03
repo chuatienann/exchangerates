@@ -15,7 +15,7 @@
 
 .navbar {
   height: 4rem;
-  background-color: var(--blue);
+  background-color: var(--blue-hover);
   margin: 0 0 1.5rem 0;
 }
 

@@ -29,7 +29,6 @@ const Converter = (props) => {
   //use effect
   useEffect(() => {
     props.getCurrSymbol();
-    console.log("useEff run");
   }, []);
 
   useEffect(() => {
@@ -38,16 +37,8 @@ const Converter = (props) => {
 
   return (
     <>
-      {/* {JSON.stringify(convert)}
-      <br></br>
-      <br></br>
-      {JSON.stringify(props.selection)}
-      <br></br>
-      {JSON.stringify(props.currSymbol)}
-      <br></br> */}
-
       <div className="row">
-        <h4>Converter</h4>
+        <h4>Currency</h4>
       </div>
       <div className="row">
         <div className="col-sm-5">

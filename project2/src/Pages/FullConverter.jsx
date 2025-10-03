@@ -3,6 +3,7 @@ import Converter from "../Components/Converter";
 import ConverterCard from "../Components/ConverterCard";
 
 const FullConverter = (props) => {
+  const rates = props.convert.rates && Object.values(props.convert.rates)[0];
   return (
     <>
       <div className="row padding-1 border shadow">
@@ -24,7 +25,7 @@ const FullConverter = (props) => {
             to={props.selection.to}
             currSymbol={props.currSymbol}
             emojiFlags={props.emojiFlags}
-            convert={props.convert.result}
+            convert={rates}
           ></ConverterCard>
         </div>
         <div className="col-sm-6">
@@ -33,7 +34,7 @@ const FullConverter = (props) => {
             to={props.selection.from}
             currSymbol={props.currSymbol}
             emojiFlags={props.emojiFlags}
-            convert={1/(props.convert.result)}
+            convert={1 / rates}
           ></ConverterCard>
         </div>
       </div>

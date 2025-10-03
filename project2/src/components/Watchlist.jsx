@@ -92,26 +92,46 @@ const Watchlist = (props) => {
 
   const getWatchlistData = async () => {
     // get rate
-    const dataRate = await getData(
-      `latest?base=${baseCurr}&symbols=${favCurr}`
-    );
+    const dataRate = await getData(`latest?from=${baseCurr}&to=${favCurr}`);
 
-    // get fluctuation
-    const dataFluc = await getData(
-      `fluctuation?start_date=${props.historyDate(0, 0, -1)}&end_date=${
-        props.todayDate
-      }&base=${baseCurr}&symbols=${favCurr}`
-    );
+    // get dates
+    const date = await getData(`latest?to=USD`);
+    const todayDate = date.date;
+    const startDate = props.historyDate(0, 0, -1);
 
     // get time-series
-    favCurr.forEach((item) => {
-      getTimeSeries(baseCurr, item);
-    });
+    let dataFluc = {};
+    const dataTimeSeries = await getData(
+      `${startDate}..${todayDate}?&from=${baseCurr}&to=${favCurr}`
+    );
+
+    // loop over each favCurr to setTimeSeries and extend object dataFluc
+    for (const sym of favCurr) {
+      const data = Object.entries(dataTimeSeries.rates).map((item) => {
+        return {
+          date: new Date(item[0]).toDateString(),
+          rate: item[1][sym],
+        };
+      });
+
+      setTimeSeries((currState) => {
+        return { ...currState, [sym]: data };
+      });
+
+      // calculate fluctuation
+      // startDate might be weekend, the API only have data on WEEKDAYS
+      const firstDate = Object.keys(dataTimeSeries.rates)[0];
+
+      const firstRate = dataTimeSeries.rates[firstDate][sym];
+      const lastRate = dataTimeSeries.rates[todayDate][sym];
+      const fluc =
+        Math.ceil(((lastRate - firstRate) / firstRate) * 10000) / 100;
+      dataFluc[sym] = fluc;
+    }
 
     // create data structure for setWatchlist
     const obj = favCurr.reduce((acc, item) => {
-      const flucRoundUp =
-        Math.ceil(dataFluc.rates[item].change_pct * -10000) / 100;
+      const flucRoundUp = dataFluc[item];
       const rateRoundUp = Math.ceil(dataRate.rates[item] * 100) / 100;
 
       acc[item] = {
@@ -122,25 +142,6 @@ const Watchlist = (props) => {
     }, {});
 
     setWatchlist(obj);
-  };
-
-  const getTimeSeries = async (base, sym) => {
-    const dataTimeSeries = await getData(
-      `timeseries?start_date=${props.historyDate(0, 0, -1)}&end_date=${
-        props.todayDate
-      }&base=${base}&symbols=${sym}`
-    );
-
-    const data = Object.entries(dataTimeSeries.rates).map((item) => {
-      return {
-        date: new Date(item[0]).toDateString(),
-        rate: item[1][sym],
-      };
-    });
-
-    setTimeSeries((currState) => {
-      return { ...currState, [sym]: data };
-    });
   };
 
   useEffect(() => {
@@ -215,7 +216,7 @@ const Watchlist = (props) => {
       {/* {JSON.stringify(dataObj)} */}
       <div className="row padding-tb">
         <div className="col-sm-9">
-          <h4>Exchange Rate Watchlist</h4>
+          <h4>Currency Watchlist</h4>
         </div>
         <div className="col-sm-3">
           <button
@@ -236,9 +237,9 @@ const Watchlist = (props) => {
       <ul className="list-group list-group-flush">
         <li className="list-group-item">
           <div className="row header">
-            <div className="col-sm-2">Sym.</div>
+            <div className="col-sm-2">Cur.</div>
             <div className="col-sm-3">Rate</div>
-            <div className="col-sm-7">Change% (1Y)</div>
+            <div className="col-sm-7">1Y change (%)</div>
           </div>
         </li>
         <div className="scroll">
@@ -254,7 +255,11 @@ const Watchlist = (props) => {
               >
                 <div className="row fav-currency">
                   <div
-                    className={isEdit ? "col-sm-2" : "col-sm-2"}
+                    className={
+                      isEdit
+                        ? "col-sm-2 cursor-pointer"
+                        : "col-sm-2 cursor-pointer"
+                    }
                     id={idx}
                     onClick={handleBaseCurr}
                   >
@@ -292,10 +297,10 @@ const Watchlist = (props) => {
         <li className="list-group-item">
           <div className="row fav-currency">
             <select className="col-sm-3" ref={selectRef}>
-              {Object.values(props.currSymbol).map((item, idx) => {
+              {Object.keys(props.currSymbol).map((item, idx) => {
                 return (
-                  <option key={idx} value={item.code}>
-                    {item.code}
+                  <option key={idx} value={item}>
+                    {item}
                   </option>
                 );
               })}

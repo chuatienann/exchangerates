@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import useGet from "./Hooks/useGet";
 import NavBar from "./Components/NavBar";
@@ -8,7 +8,6 @@ import FullConverter from "./Pages/FullConverter";
 
 const App = () => {
   const defaultCurrency = { from: "SGD", to: "MYR" };
-  const todayDate = new Date().toISOString().split("T")[0];
   const emojiFlags = {
     AED: "🇦🇪",
     AFN: "🇦🇫",
@@ -186,6 +185,7 @@ const App = () => {
   // state for API endpoints (GET)
   const [currSymbol, setcurrSymbol] = useState({});
   const [convert, setConvert] = useState({ result: 1 });
+  const [todayDate, setTodayDate] = useState("");
 
   // state
   const [selection, setSelection] = useState({
@@ -202,29 +202,42 @@ const App = () => {
 
   const getConvert = async () => {
     const data = await getData(
-      `convert?from=${selection.from}&to=${selection.to}&amount=${selection.amount}&date=${selection.date}`
+      `${selection.date}?amount=${selection.amount}&from=${selection.from}&to=${selection.to}`
     );
     setConvert(data);
   };
 
   const getCurrSymbol = async () => {
-    const data = await getData("symbols");
-    setcurrSymbol(data.symbols);
+    const data = await getData("currencies");
+    setcurrSymbol(data);
   };
 
   // subtract date
   const historyDate = (days, months, years) => {
-    var date = new Date();
+    const date = new Date();
     date.setDate(date.getDate() + days);
     date.setMonth(date.getMonth() + months);
     date.setFullYear(date.getFullYear() + years);
     return date.toISOString().split("T")[0];
   };
 
+  // determine todayDate/last updated date
+  // Frankfurter uses European Central Bank data that only update the rate at around 16:00 CET every working day, except on TARGET closing days.
+  const determineTodayDate = async () => {
+    const data = await getData(`latest?to=USD`);
+    setTodayDate(data.date);
+    setSelection((currState) => {
+      return { ...currState, date: data.date };
+    });
+  };
+
+  useEffect(() => {
+    determineTodayDate();
+  }, []);
+
   return (
     <>
       <NavBar></NavBar>
-      {/* {JSON.stringify(selection)} */}
       <div className="container">
         <Routes>
           <Route

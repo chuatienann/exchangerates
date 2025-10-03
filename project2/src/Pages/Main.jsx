@@ -10,6 +10,14 @@ function Main(props) {
     <>
       {/* <div className="container"> */}
       <div className="row">
+        <div className="col-sm-3 border shadow">
+          <Watchlist
+            todayDate={props.todayDate}
+            historyDate={props.historyDate}
+            currSymbol={props.currSymbol}
+            emojiFlags={props.emojiFlags}
+          ></Watchlist>
+        </div>
         <div className="col-sm-9">
           <div className="row padding-1 border shadow">
             <Converter
@@ -56,14 +64,6 @@ function Main(props) {
               )}
             </div>
           </div>
-        </div>
-        <div className="col-sm-3 border shadow">
-          <Watchlist
-            todayDate={props.todayDate}
-            historyDate={props.historyDate}
-            currSymbol={props.currSymbol}
-            emojiFlags={props.emojiFlags}
-          ></Watchlist>
         </div>
       </div>
       {/* </div> */}

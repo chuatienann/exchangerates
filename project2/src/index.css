@@ -3,7 +3,8 @@
 :root {
   --grey: rgba(83, 83, 83, 1);
   --blue-hover: rgba(149, 181, 209, 0.7);
-  --blue: #030728;
+  --blue: rgba(149, 181, 209, 1);
+  --navbar-blue: rgba(90, 134, 173, 1);
   --lightblue: rgba(90, 134, 173, 0.5);
   --lightblue2: rgba(90, 134, 173, 0.2);
   --bgm: rgb(239, 239, 239);
@@ -12,6 +13,7 @@
   --font2: "Nunito Sans", sans-serif;
   --font3: "Open Sans", sans-serif;
   --font4: "Raleway", sans-serif;
+  --navy: rgb(20, 32, 50);
 }
 
 * {
@@ -20,7 +22,7 @@
 
 body {
   margin: auto;
-  background-color: var(--bgm);
+  background-color: var(--navy);
   font-family: var(--font2);
   color: var(--grey);
 }
@@ -75,7 +77,7 @@ h4 {
   height: 30px;
   font-size: 0.8rem;
 
-  color: var(--blue);
+  color: var(--navy);
   border-color: var(--blue);
 }
 
@@ -84,7 +86,7 @@ h4 {
   width: 50px;
   height: 50px;
 
-  color: var(--blue);
+  color: var(--nav);
   border-color: var(--blue);
 }
 
@@ -249,4 +251,8 @@ li {
   text-align: center;
   margin: auto;
   margin-top: 25%;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

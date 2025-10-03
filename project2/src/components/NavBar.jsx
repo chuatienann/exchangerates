@@ -12,13 +12,13 @@ const NavBar = () => {
               src="/currency-converter.png"
               className={`${styles.logo} col-sm-1`}
             />
-            <p className={`${styles.brand} col-sm-2`}>Currency Converter</p>
+            <p className={`${styles.brand} col-sm-2`}>£xchange Rate$</p>
             <li className="col-sm-2">
               <NavLink
                 className={(navData) => (navData.isActive ? styles.active : "")}
                 to="/"
               >
-                Dashboard
+                Home
               </NavLink>
             </li>
             <li className="col-sm-2">
@@ -26,7 +26,7 @@ const NavBar = () => {
                 className={(navData) => (navData.isActive ? styles.active : "")}
                 to="/converter"
               >
-                Converter
+                Tabulation
               </NavLink>
             </li>
             <li className="col-sm-2">
@@ -34,7 +34,7 @@ const NavBar = () => {
                 className={(navData) => (navData.isActive ? styles.active : "")}
                 to="/graph"
               >
-                Chart
+                Graph
               </NavLink>
             </li>
           </ul>
