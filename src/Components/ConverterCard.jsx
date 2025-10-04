@@ -1,4 +1,3 @@
-// src/Pages/convertedcard.jsx
 import React from "react";
 
 const ConverterCard = (props) => {

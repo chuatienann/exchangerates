@@ -1,4 +1,3 @@
-// src/Hooks/useGet.jsx
 const BASE_URL =
   import.meta.env.VITE_SERVER || "https://api.frankfurter.app";
 
