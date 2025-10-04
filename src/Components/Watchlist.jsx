@@ -25,7 +25,7 @@ const Watchlist = (props) => {
   const [openRepeat, setOpenRepeat] = useState(false);
 
   // function
-  const handleFavCurr = (event, isRemove = false) => {
+  const handleFavCurr = (event, isRemove = false) => { // true = remove, false = add
     if (isRemove) {
       console.log(event.target.id);
       setFavCurr((currState) => {

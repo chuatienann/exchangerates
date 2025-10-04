@@ -3,12 +3,12 @@ const BASE_URL =
   import.meta.env.VITE_SERVER || "https://api.frankfurter.app";
 
 const normalizeBase = (base) => {
-  return base.endsWith("/") ? base.slice(0, -1) : base;
+  return base.endsWith("/") ? base.slice(0, -1) : base; // Removes any trailing / from the base URL
 };
 
 const joinUrl = (base, endpoint) => {
   if (!endpoint) return base;
-  if (/^https?:\/\//i.test(endpoint)) return endpoint;
+  if (/^https?:\/\//i.test(endpoint)) return endpoint; // if full url, return as is
   return `${normalizeBase(base)}/${endpoint.replace(/^\/+/, "")}`;
 };
 

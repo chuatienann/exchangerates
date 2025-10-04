@@ -4,8 +4,8 @@ import { Line } from "react-chartjs-2";
 
 const Widget = (props) => {
   // function
-  const handleDel = (event) => {
-    props.setWidgetInfo((currState) => {
+  const handleDel = (event) => { //delete function
+    props.setWidgetInfo((currState) => { //update parent
       return [...currState].toSpliced(event.target.id, 1);
     });
   };
@@ -13,8 +13,8 @@ const Widget = (props) => {
     props.setSelection((currState) => {
       return {
         ...currState,
-        from: props.sym.slice(0, 3),
-        to: props.sym.slice(4),
+        from: props.sym.slice(0, 3), //first 3 characters
+        to: props.sym.slice(4), //characters after index 4
         timeframe: props.timeframe,
       };
     });
@@ -23,7 +23,7 @@ const Widget = (props) => {
   // graph chart options & data
   const options = {
     responsive: true,
-    events: [],
+    events: [], //disable all events
     plugins: {
       legend: {
         display: false,
@@ -73,7 +73,7 @@ const Widget = (props) => {
   props.data.datasets[0].backgroundColor = "rgba(255,255,255,0.2)";
 
   const data = () => {
-    return props.data;
+    return props.data; //return data from props
   };
 
   return (

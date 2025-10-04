@@ -9,6 +9,7 @@ const NavBar = () => {
         <nav>
           <ul>
             <img
+              alt="logo"
               src="/currency-converter.png"
               className={`${styles.logo} col-sm-1`}
             />

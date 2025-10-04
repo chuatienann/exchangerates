@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Converter = (props) => {
-  const dateRef = useRef();
+  const dateRef = useRef(); // references the <input type="date"> field so its value can be read directly
 
   // state
   const [reverse, setReverse] = useState(false);
@@ -20,7 +20,7 @@ const Converter = (props) => {
     setReverse(true);
   };
 
-  const handleDate = () => {
+  const handleDate = () => { // Updates the date in the selection state whenever the user picks a new date.
     props.setSelection((currState) => {
       return { ...currState, date: dateRef.current.value };
     });
@@ -28,11 +28,11 @@ const Converter = (props) => {
 
   //use effect
   useEffect(() => {
-    props.getCurrSymbol();
+    props.getCurrSymbol(); // fetch currency symbols once on component mount
   }, []);
 
   useEffect(() => {
-    props.getConvert();
+    props.getConvert(); // fetch conversion rate when selection state changes
   }, [props.selection]);
 
   return (

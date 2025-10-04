@@ -50,7 +50,7 @@ const Graph = (props) => {
     );
 
     // get fluctuation
-    // startDate might be weekend, the API only have data on WEEKDAYS
+
     const firstDate = Object.keys(dataTimeSeries.rates)[0];
 
     const firstRate = Object.values(dataTimeSeries.rates[firstDate])[0];
@@ -97,7 +97,7 @@ const Graph = (props) => {
     });
   };
 
-  const handleCloseRepeat = (event, reason) => {
+  const handleCloseRepeat = (event, reason) => { // to close the Snackbar warning that appears when the user tries to add a duplicate widget.
     if (reason === "clickaway") {
       return;
     }
@@ -111,7 +111,7 @@ const Graph = (props) => {
 
   // graph chart data & options
   const data = {
-    labels: timeSeries.map((item) => item.date.slice(4)),
+    labels: timeSeries.map((item) => item.date.slice(4)), // removes the first 4 characters eg Mon from Mon Jan 01 2024 
     datasets: [
       {
         data: timeSeries.map((item) => item.rate),
@@ -122,16 +122,16 @@ const Graph = (props) => {
   };
 
   const options = {
-    responsive: true,
+    responsive: true, // chart resizes automatically
     plugins: {
       legend: {
-        display: false,
+        display: false, // hide the legend
       },
     },
     scales: {
       x: {
         grid: {
-          display: false,
+          display: false, // removes vertical grid lines along the x-axis
         },
       },
     },

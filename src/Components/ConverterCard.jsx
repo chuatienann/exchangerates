@@ -10,11 +10,12 @@ const ConverterCard = (props) => {
   // Frankfurter returns an object like { date, amount, base, rates: { "MYR": 3.2 } }
   let rateNumber = 1;
   if (props.convert) {
-    if (props.convert.rates && Object.values(props.convert.rates).length > 0) {
-      rateNumber = Number(Object.values(props.convert.rates)[0]);
+    if (props.convert.rates && Object.values(props.convert.rates).length > 0) { 
+      rateNumber = Number(Object.values(props.convert.rates)[0]); // grabs the first value in the rates object
     } else if (typeof props.convert === "number") {
       rateNumber = props.convert;
-    } else if (props.convert.rate && !isNaN(Number(props.convert.rate))) {
+    } else if (props.convert.rate && !isNaN(Number(props.convert.rate))) { // if it has a .rate property that is truthy
+      // and Number(...) of it is not NaN, use that numeric conversion.
       rateNumber = Number(props.convert.rate);
     }
   }
